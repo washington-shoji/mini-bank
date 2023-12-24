@@ -1,96 +1,10 @@
+#include "Classes/Account.h"
+
 #include<iostream>
 #include<fstream>
 #include<cctype>
 #include<iomanip>
 using namespace std;
-
-
-class account
-{
-private:
-    int account_number;
-    char name[50];
-    int deposit;
-    char type;
-public:
-    void create_account();
-    void show_account() const;
-    void modify();
-    void deposit_account(int);
-    void withdraw_account(int);
-    void report() const;
-    int return_account_number() const;
-    int return_deposit() const;
-    char return_type() const;
-
-};
-
-void account::create_account()
-{
-    cout<<"\nEnter the account No. :";
-    cin>>account_number;
-    cout<<"\n\nEnter the name of the account holder : ";
-    cin.ignore();
-    cin.getline(name, 50);
-    cout<<"\nEnter type of account (C/S) : ";
-    cin>>type;
-    type=toupper(type);
-    cout<<"\nEnter the initial amount(>=500 for saving and >=1000 for current) : ";
-    cin>>deposit;
-    cout<<"\n\n\nAccount created...";
-}
-
-void account::show_account() const
-{
-    cout<<"\nAccount No. : ";
-    cout<<"\nAccount holder name : ";
-    cout<<name;
-    cout<<"\nType of account : "<<type;
-    cout<<"\nBalance amount : "<<deposit;
-}
-
-void account::modify()
-{
-    cout<<"\nAccount No. : "<<account_number;
-    cout<<"\nModify account holder name : ";
-    cin.ignore();
-    cin.getline(name, 50);
-    cout<<"\nModify type of account";
-    cin>>type;
-    type=toupper(type);
-    cout<<"\nModify balance amount : ";
-    cin>>deposit;
-}
-
-void account::deposit_account(int x)
-{
-    deposit+=x;
-}
-
-void account::withdraw_account(int x)
-{
-    deposit-=x;
-}
-
-void account::report() const
-{
-    cout<<account_number<<setw(10)<<" "<<name<<setw(10)<<" "<<type<<setw(6)<<deposit<<endl;
-}
-
-int account::return_account_number() const
-{
-    return account_number;
-}
-
-int account::return_deposit() const
-{
-    return deposit;
-}
-
-char account::return_type() const
-{
-    return type;
-}
 
 void write_account();
 void display_detail(int);
@@ -162,17 +76,17 @@ int main()
 
 void write_account()
 {
-    account ac;
+    Account ac;
     ofstream outFile;
     outFile.open("account.dat", ios::binary|ios::app);
     ac.create_account();
-    outFile.write(reinterpret_cast<char *> (&ac), sizeof(account));
+    outFile.write(reinterpret_cast<char *> (&ac), sizeof(Account));
     outFile.close();
 }
 
 void display_detail(int n)
 {
-    account ac;
+    Account ac;
     bool flag=false;
     ifstream inFile;
     inFile.open("account.dat", ios::binary);
@@ -183,7 +97,7 @@ void display_detail(int n)
     }
     cout<<"\nBalance Details\n";
 
-    while (inFile.read(reinterpret_cast<char *> (&ac), sizeof(account)));
+    while (inFile.read(reinterpret_cast<char *> (&ac), sizeof(Account)));
     {
        if(ac.return_account_number()==n)
        {
@@ -200,7 +114,7 @@ void display_detail(int n)
 void modify_account(int n)
 {
     bool found=false;
-    account ac;
+    Account ac;
     fstream File;
     File.open("account.dat", ios::binary|ios::in|ios::out);
     if(!File)
@@ -210,15 +124,15 @@ void modify_account(int n)
     }
     while (!File.eof() && found==false)
     {
-        File.read(reinterpret_cast<char *> (&ac), sizeof(account));
+        File.read(reinterpret_cast<char *> (&ac), sizeof(Account));
         if(ac.return_account_number()==n)
         {
             ac.show_account();
             cout<<"\n\nEnter the new details of the account"<<endl;
             ac.modify();
-            int pos=(-1)*static_cast<int>(sizeof(account));
+            int pos=(-1)*static_cast<int>(sizeof(Account));
             File.seekp(pos,ios::cur);
-            File.write(reinterpret_cast<char *> (&ac), sizeof(account));
+            File.write(reinterpret_cast<char *> (&ac), sizeof(Account));
             cout<<"\n\n\t Record updated";
             found=true;
         }
@@ -231,7 +145,7 @@ void modify_account(int n)
 
 void delete_account(int n)
 {
-    account ac;
+    Account ac;
     ifstream inFile;
     ofstream outFile;
     inFile.open("account.dat",ios::binary);
@@ -242,11 +156,11 @@ void delete_account(int n)
     }
     outFile.open("Temp.dat",ios::binary);
     inFile.seekg(0,ios::beg);
-    while (inFile.read(reinterpret_cast<char *> (&ac), sizeof(account)));
+    while (inFile.read(reinterpret_cast<char *> (&ac), sizeof(Account)));
     {
         if(ac.return_account_number()!=n)
         {
-            outFile.write(reinterpret_cast<char *> (&ac), sizeof(account));
+            outFile.write(reinterpret_cast<char *> (&ac), sizeof(Account));
         }
     }
     inFile.close();
@@ -259,7 +173,7 @@ void delete_account(int n)
 
 void display_all()
 {
-    account ac;
+    Account ac;
     ifstream inFile;
     inFile.open("account.dat",ios::binary);
     if(!inFile)
@@ -271,7 +185,7 @@ void display_all()
 	cout<<"====================================================\n";
 	cout<<"A/c no.      NAME           Type  Balance\n";
 	cout<<"====================================================\n";
-	while(inFile.read(reinterpret_cast<char *> (&ac), sizeof(account)))
+	while(inFile.read(reinterpret_cast<char *> (&ac), sizeof(Account)))
 	{
 		ac.report();
 	}
@@ -283,7 +197,7 @@ void deposit_withdraw(int n, int option)
 {
     int amt;
     bool found=false;
-    account ac;
+    Account ac;
     fstream File;
     File.open("account.dat", ios::binary|ios::in|ios::out);
     if(!File)
@@ -293,7 +207,7 @@ void deposit_withdraw(int n, int option)
     }
     while (!File.eof() && found==false)
     {
-        File.read(reinterpret_cast<char *> (&ac), sizeof(account));
+        File.read(reinterpret_cast<char *> (&ac), sizeof(Account));
         if(ac.return_account_number()==n)
         {
             ac.show_account();
@@ -317,7 +231,7 @@ void deposit_withdraw(int n, int option)
             }
             int pos=(-1)*static_cast<int>(sizeof(ac));
             File.seekp(pos,ios::cur);
-            File.write(reinterpret_cast<char *> (&ac), sizeof(account));
+            File.write(reinterpret_cast<char *> (&ac), sizeof(Account));
             cout<<"\n\n\t Record updated";
             found=true;
         }
