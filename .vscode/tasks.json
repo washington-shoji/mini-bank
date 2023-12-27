@@ -10,6 +10,8 @@
 				"${workspaceFolder}\\*.cpp",
 				"${workspaceFolder}\\Classes\\*.h",
 				"${workspaceFolder}\\Classes\\*.cpp",
+				"${workspaceFolder}\\Functions\\*.h",
+				"${workspaceFolder}\\Functions\\*.cpp",
 				"-o",
 				"${fileDirname}\\${fileBasenameNoExtension}.exe"
 			],
